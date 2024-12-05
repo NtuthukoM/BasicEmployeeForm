@@ -21,8 +21,12 @@ public class EmployeeForm {
 
 	private void prepareGUI() {
 		mainFrame = new JFrame("Employee Details");
+		JPanel panel = new JPanel();
+		LayoutManager layout = new BoxLayout(panel, BoxLayout.PAGE_AXIS);
+		panel.setLayout(layout);
+		
 		mainFrame.setSize(560, 400);
-		mainFrame.setLayout(new GridLayout(3, 1));
+		
 		
 		headerLabel = new JLabel("", JLabel.CENTER);
 		statusLabel = new JLabel("", JLabel.CENTER);
@@ -38,9 +42,10 @@ public class EmployeeForm {
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new FlowLayout());
 		
-		mainFrame.add(headerLabel);
-		mainFrame.add(controlPanel);
-		mainFrame.add(statusLabel);
+		panel.add(headerLabel);
+		panel.add(controlPanel);
+		panel.add(statusLabel);
+		mainFrame.getContentPane().add(panel, BorderLayout.CENTER);
 		mainFrame.setVisible(true);
 	}
 
