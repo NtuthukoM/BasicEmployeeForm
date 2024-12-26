@@ -2,8 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
+import java.io.*;
 
 public class EmployeeForm {
 	
@@ -12,6 +11,9 @@ public class EmployeeForm {
 	private JLabel statusLabel;
 	private JPanel controlPanel;
 	private JPanel formPanel;
+	private JPanel ui;
+	EmployeeManager manager = new EmployeeManager();
+	private JTable table;
 	//Form view:
 	JTextField tffName;
 	JTextField tfLname;
@@ -31,7 +33,7 @@ public class EmployeeForm {
 	
 	public static void main(String[] args) {
 			EmployeeForm form = new EmployeeForm();
-			form.showForm();
+			form.createEmpUI();
 	}
 
 	private void prepareGUI() {
@@ -61,13 +63,14 @@ public class EmployeeForm {
 		panel.add(controlPanel);
 		panel.add(statusLabel);
 		
-		formPanel = new JPanel();
-		formPanel.setLayout(new GridLayout(6, 2, 20, 20));
-		mainFrame.getContentPane().add(formPanel, BorderLayout.CENTER);
+
 		mainFrame.setVisible(true);
 	}
 	
 	private void showForm() {
+		formPanel = new JPanel();
+		formPanel.setLayout(new GridLayout(6, 2, 20, 20));
+		
 		tffName = new JTextField(100);
 		tfLname = new JTextField(100);
 		tfDesignation = new JTextField(100);
@@ -110,11 +113,10 @@ public class EmployeeForm {
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnSave = new JButton("Save");
-		btnCancel = new JButton("Cancel");
+		btnCancel = new JButton("Back");
 		buttons.add(btnSave);
 		buttons.add(btnCancel);
 		formPanel.add(buttons);
-		mainFrame.setVisible(true);
 		
 		//Listeners:
 		btnSave.addActionListener(new ActionListener() {
@@ -128,7 +130,7 @@ public class EmployeeForm {
 					emp.Gender = (String)listComboGender.getItemAt(listComboGender.getSelectedIndex());
 					emp.Department = (String)listComboDepartment.getItemAt(listComboDepartment.getSelectedIndex());
 					
-					EmployeeManager manager = new EmployeeManager();
+					
 					manager.SaveEmployee(emp);
 					JOptionPane.showMessageDialog(formPanel, "Employee saved", 
                                           "INFORMATION", 
@@ -143,10 +145,66 @@ public class EmployeeForm {
 			public void actionPerformed(ActionEvent e) {
 				//open table, close and reset current form.
 				ResetForm();
+				
+				CardLayout cardLayout = (CardLayout)(ui.getLayout());
+				cardLayout.show(ui, "table");				
 			}
 		}); 
 	}
 	
+	private void showTable() {
+		tableViewPanel = new JPanel(new BorderLayout());
+		
+		//Column Names:
+		String[] columns = {"Name", "Last Name", "Gender", "Designation", "Department"};
+		ArrayList<Employee> emps = manager.ReadEmployees();
+		String[][] data = new String[emps.size()][5];
+		for(int i = 0; i < emps.size(); i++) {
+			
+			Employee emp = emps.get(i);
+			
+			data[i][0] = emp.Fname;
+			data[i][1] = emp.Lname;
+			data[i][2] = emp.Gender;
+			data[i][3] = emp.Designation;
+			data[i][4] = emp.Department;
+		}
+			
+	    table = new JTable(data, columns);
+		//table.setBounds(10, 10, 200, 300);
+		JScrollPane sp = new JScrollPane(table);
+		tableViewPanel.add(sp, BorderLayout.CENTER);
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		JButton btnNew = new JButton("Add New");
+		buttons.add(btnNew);
+		tableViewPanel.add(buttons, BorderLayout.SOUTH);
+		
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cardLayout = (CardLayout)(ui.getLayout());
+				cardLayout.show(ui, "form");
+			}
+		}); 
+	}
+	
+	
+	private void createEmpUI(){
+		showForm();
+		showTable();
+		
+		ui = new JPanel();
+		CardLayout layout = new CardLayout();
+		layout.setHgap(10);
+		layout.setVgap(10);
+		ui.setLayout(layout);
+		ui.add("form", formPanel);
+		ui.add("table", tableViewPanel);
+		layout.show(ui, "table");
+		
+		mainFrame.getContentPane().add(ui, BorderLayout.CENTER);
+		
+	}
 	private void ResetForm() {
 		tffName.setText("");
 		tfLname.setText("");
@@ -188,56 +246,7 @@ public class EmployeeForm {
 		return true;
 	}
 
-	private void showCardLayoutDemo() {
-		headerLabel.setText("Layout in action: CardLayout");
-		
-		final JPanel panel = new JPanel();
-		panel.setBackground(Color.CYAN);
-		panel.setSize(300, 300);
-		
-		CardLayout layout = new CardLayout();
-		layout.setHgap(10);
-		layout.setVgap(10);
-		panel.setLayout(layout);
-		
-		JPanel buttonPanel = new JPanel(new FlowLayout());
-		buttonPanel.add(new JButton("OK"));
-		buttonPanel.add(new JButton("Cancel"));
-		
-		JPanel textBoxPanel = new JPanel(new FlowLayout());
-		textBoxPanel.add(new JLabel("Name:"));
-		textBoxPanel.add(new JTextField(20));
-		
-		panel.add("Button", buttonPanel);
-		panel.add("Text", textBoxPanel);
-		final DefaultComboBoxModel panelName = new DefaultComboBoxModel();
-		
-		panelName.addElement("Button");
-		panelName.addElement("Text");
-		final JComboBox listCombo = new JComboBox(panelName);
-		
-		
-		listCombo.setSelectedIndex(0);
-		JScrollPane listComboScrollPane = new JScrollPane(listCombo);
-		JButton showButton = new JButton("Show");
-		
-		showButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String data = "";
-				if(listCombo.getSelectedIndex() != -1) {
-					CardLayout cardLayout = (CardLayout)(panel.getLayout());
-					data = (String)listCombo.getItemAt(listCombo.getSelectedIndex());
-					cardLayout.show(panel, (String)listCombo.getItemAt(listCombo.getSelectedIndex()));
-				}
-				statusLabel.setText(data);
-			}
-		});
-		controlPanel.add(listComboScrollPane);
-		controlPanel.add(showButton);
-		controlPanel.add(panel);
-		mainFrame.setVisible(true);
-	}
-	
+
 	class Employee
 	{
 		public String Fname;
@@ -258,7 +267,28 @@ public class EmployeeForm {
 		public ArrayList ReadEmployees() {
 			list = new ArrayList<Employee>();
 			//load employees:
-			
+			try{
+				FileReader fr = new FileReader(fileName);
+				BufferedReader br = new BufferedReader(fr);
+				String line = br.readLine();
+				while(!line.isEmpty()){
+					Employee emp = new Employee();
+					System.out.println(line);
+					String[] arr = line.split("[|]");
+					emp.Fname = arr[0]; 
+					emp.Lname = arr[1];
+					emp.Gender = arr[2];
+					emp.Designation = arr[3];
+					emp.Department = arr[4];
+					list.add(emp);
+					line = br.readLine();
+				}
+				br.close();
+				
+			}catch(Exception exc)
+			{
+				exc.getStackTrace(); 
+			}
 			return list;
 		}
 		
