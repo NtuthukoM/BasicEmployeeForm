@@ -265,7 +265,7 @@ public class EmployeeForm {
 		public void SaveEmployee(Employee emp) {
 			//save employee:
 			try{
-				FileWriter fw = new FileWriter(fileName);
+				FileWriter fw = new FileWriter(fileName, true);
 				BufferedWriter bfw = new BufferedWriter(fw);
 				bfw.write(emp.Fname + "|" + emp.Lname + "|" + emp.Gender + "|" + emp.Designation + "|" + emp.Department);
 				bfw.newLine();
