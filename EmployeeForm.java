@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
 public class EmployeeForm {
 	
@@ -119,7 +121,16 @@ public class EmployeeForm {
 			public void actionPerformed(ActionEvent e) {
 				String data = tffName.getText();
 				if(ValidateForm()) {
-					JOptionPane.showMessageDialog(formPanel, data, 
+					Employee emp = new Employee();
+					emp.Fname = tffName.getText();
+					emp.Lname = tfLname.getText();
+					emp.Designation = tfDesignation.getText();
+					emp.Gender = (String)listComboGender.getItemAt(listComboGender.getSelectedIndex());
+					emp.Department = (String)listComboDepartment.getItemAt(listComboDepartment.getSelectedIndex());
+					
+					EmployeeManager manager = new EmployeeManager();
+					manager.SaveEmployee(emp);
+					JOptionPane.showMessageDialog(formPanel, "Employee saved", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);	
 					ResetForm();
@@ -237,9 +248,15 @@ public class EmployeeForm {
 	}
 	
 	class EmployeeManager {
+		private String fileName = "data.txt";
+		private ArrayList<Employee> list;
+		
+		public EmployeeManager(){
+			ReadEmployees();
+		}
 		
 		public ArrayList ReadEmployees() {
-			ArrayList<Employee> list = new ArrayList<Employee>();
+			list = new ArrayList<Employee>();
 			//load employees:
 			
 			return list;
@@ -247,7 +264,19 @@ public class EmployeeForm {
 		
 		public void SaveEmployee(Employee emp) {
 			//save employee:
+			try{
+				FileWriter fw = new FileWriter(fileName);
+				BufferedWriter bfw = new BufferedWriter(fw);
+				bfw.write(emp.Fname + "|" + emp.Lname + "|" + emp.Gender + "|" + emp.Designation + "|" + emp.Department);
+				bfw.newLine();
+				bfw.close();
+				
+			}catch(Exception exc){
+				 exc.getStackTrace(); 
+			}
 		}
+		
+		
 	}
 	
 }
