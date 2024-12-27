@@ -3,6 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.io.*;
+import javax.swing.table.DefaultTableModel;
 
 public class EmployeeForm {
 	
@@ -14,6 +15,7 @@ public class EmployeeForm {
 	private JPanel ui;
 	EmployeeManager manager = new EmployeeManager();
 	private JTable table;
+	private DefaultTableModel model;
 	//Form view:
 	JTextField tffName;
 	JTextField tfLname;
@@ -145,7 +147,21 @@ public class EmployeeForm {
 			public void actionPerformed(ActionEvent e) {
 				//open table, close and reset current form.
 				ResetForm();
-				
+						//Column Names:
+		String[] columns = {"Name", "Last Name", "Gender", "Designation", "Department"};
+		ArrayList<Employee> emps = manager.ReadEmployees();
+		String[][] data = new String[emps.size()][5];
+		for(int i = 0; i < emps.size(); i++) {
+			
+			Employee emp = emps.get(i);
+			
+			data[i][0] = emp.Fname;
+			data[i][1] = emp.Lname;
+			data[i][2] = emp.Gender;
+			data[i][3] = emp.Designation;
+			data[i][4] = emp.Department;
+		}
+		model.setDataVector(data, columns);
 				CardLayout cardLayout = (CardLayout)(ui.getLayout());
 				cardLayout.show(ui, "table");				
 			}
@@ -169,8 +185,9 @@ public class EmployeeForm {
 			data[i][3] = emp.Designation;
 			data[i][4] = emp.Department;
 		}
-			
-	    table = new JTable(data, columns);
+		
+		model = new DefaultTableModel(data, columns);
+	    table = new JTable(model);
 		//table.setBounds(10, 10, 200, 300);
 		JScrollPane sp = new JScrollPane(table);
 		tableViewPanel.add(sp, BorderLayout.CENTER);
@@ -273,7 +290,6 @@ public class EmployeeForm {
 				String line = br.readLine();
 				while(!line.isEmpty()){
 					Employee emp = new Employee();
-					System.out.println(line);
 					String[] arr = line.split("[|]");
 					emp.Fname = arr[0]; 
 					emp.Lname = arr[1];
