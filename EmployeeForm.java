@@ -8,9 +8,6 @@ import javax.swing.table.DefaultTableModel;
 public class EmployeeForm {
 	
 	private JFrame mainFrame;
-	private JLabel headerLabel;
-	private JLabel statusLabel;
-	private JPanel controlPanel;
 	private JPanel formPanel;
 	private JPanel ui;
 	EmployeeManager manager = new EmployeeManager();
@@ -27,7 +24,6 @@ public class EmployeeForm {
 	JButton btnCancel;
 	//Table view:
 	private JPanel tableViewPanel;
-	private JPanel navPanel;
 	
 	public EmployeeForm() {
 		prepareGUI();
@@ -40,16 +36,7 @@ public class EmployeeForm {
 
 	private void prepareGUI() {
 		mainFrame = new JFrame("Employee Details");
-		JPanel panel = new JPanel();
-		LayoutManager layout = new BoxLayout(panel, BoxLayout.PAGE_AXIS);
-		panel.setLayout(layout);
-		
 		mainFrame.setSize(560, 400);
-		
-		
-		headerLabel = new JLabel("", JLabel.CENTER);
-		statusLabel = new JLabel("", JLabel.CENTER);
-		statusLabel.setSize(350, 100);
 		
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) {
@@ -57,19 +44,11 @@ public class EmployeeForm {
 			}
 		
 		});
-		
-		controlPanel = new JPanel();
-		controlPanel.setLayout(new FlowLayout());
-		
-		panel.add(headerLabel);
-		panel.add(controlPanel);
-		panel.add(statusLabel);
-		
 
 		mainFrame.setVisible(true);
 	}
 	
-	private void showForm() {
+	private void createFormView() {
 		
 		formPanel = new JPanel();
 		formPanel.setLayout(new GridLayout(6, 2, 20, 20));
@@ -170,7 +149,7 @@ public class EmployeeForm {
 		}); 
 	}
 	
-	private void showTable() {
+	private void createTableView() {
 		tableViewPanel = new JPanel(new BorderLayout());
 		
 		//Column Names:
@@ -190,7 +169,6 @@ public class EmployeeForm {
 		
 		model = new DefaultTableModel(data, columns);
 	    table = new JTable(model);
-		//table.setBounds(10, 10, 200, 300);
 		JScrollPane sp = new JScrollPane(table);
 		tableViewPanel.add(sp, BorderLayout.CENTER);
 		JPanel buttons = new JPanel();
@@ -210,8 +188,8 @@ public class EmployeeForm {
 	
 	
 	private void createEmpUI(){
-		showForm();
-		showTable();
+		createFormView();
+		createTableView();
 		
 		ui = new JPanel();
 		CardLayout layout = new CardLayout();
