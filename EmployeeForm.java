@@ -70,6 +70,7 @@ public class EmployeeForm {
 	}
 	
 	private void showForm() {
+		
 		formPanel = new JPanel();
 		formPanel.setLayout(new GridLayout(6, 2, 20, 20));
 		
@@ -163,7 +164,8 @@ public class EmployeeForm {
 		}
 		model.setDataVector(data, columns);
 				CardLayout cardLayout = (CardLayout)(ui.getLayout());
-				cardLayout.show(ui, "table");				
+				cardLayout.show(ui, "table");
+			mainFrame.setTitle("Employee Details");				
 			}
 		}); 
 	}
@@ -200,6 +202,7 @@ public class EmployeeForm {
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cardLayout = (CardLayout)(ui.getLayout());
+				mainFrame.setTitle("Add New Employee");
 				cardLayout.show(ui, "form");
 			}
 		}); 
