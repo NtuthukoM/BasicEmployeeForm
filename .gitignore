@@ -1,3 +1,4 @@
 ## Ignore clss files
 ##
-*.cass
+*.class
+*.txt
